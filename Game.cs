@@ -1,6 +1,4 @@
-﻿using System.Collections.Immutable;
-
-namespace TTT
+﻿namespace TTT
 {
     class Game
     {
@@ -49,17 +47,24 @@ namespace TTT
 
         public bool is_legal(byte field)
         {
-            return this._board[field] == null ? true : false;
+            return this._board[field] == null;
         }
 
         private byte check_game_state()
         {
-            return 2;
+            if (!this._board.Contains(null)) return 3;
+            // TODO: check wining conditions and player
+            return 0;
         }
 
-        public string send_game_state_info(byte game_state)
+        public string get_game_state_verbalized()
         {
             return _game_states[check_game_state()];
+        }
+
+        public bool is_finished()
+        {
+            return this.check_game_state() > 0;
         }
 
         private List<char> getReadable_board()
@@ -94,13 +99,40 @@ namespace TTT
     }
     class Program
     {
+        public static bool tips;
         static void Main(string[] args)
         {
-            Game game = new();
-            game.display_board();
-            game.make_move(5);
-            game.display_board();
-            Console.WriteLine(game.send_game_state_info(2));
+            while (true)
+            {
+                Console.WriteLine("Grać z numerami pól?");
+                string? tips_prompt = Console.ReadLine();
+                if (tips_prompt.Contains("exit")) break;
+                switch (tips_prompt)
+                {
+                    case "y":
+                        tips = true;
+                        break;
+                    case "n":
+                        tips = false;
+                        break;
+                }
+                Game game = new(tips);
+                game.display_board();
+
+                /*while (game.is_finished())*/
+                while (!game.is_finished())
+                {
+                    string prompt = Console.ReadLine();
+                    if (prompt.Contains("cancel")) break;
+                    if (prompt.Length == 1 && char.IsDigit(prompt[0]))
+                    {
+                        game.make_move(byte.Parse(prompt));
+                        Console.Clear();
+                        game.display_board();
+                    }
+                }
+                Console.WriteLine(game.get_game_state_verbalized());
+            }
         }
     }
 }
