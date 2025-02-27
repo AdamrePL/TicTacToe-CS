@@ -2,6 +2,18 @@
 {
     class Game
     {
+        /**
+         * TODO:
+         * Make documentation
+         * Add comments for documentation inside code
+         * Sort out methods
+         * ! Add input handlers? I doubt I need it.
+         * ! Add tests for everything; ex. execution time for each method
+         * ! Check if anything can be optimized; reduce memory and increase speed
+         * 
+         * & After 1.0.0 release:
+         * Add games history
+         */
         private List<bool?> _board = [];
         private bool _tips;
         private bool _turn = false;
@@ -26,7 +38,7 @@
             _game_states.Add(0, "ongoing");
             _game_states.Add(1, $"{player_1} Won!");
             _game_states.Add(2, $"{player_2} Won!");
-            _game_states.Add(3, "draw!");
+            _game_states.Add(3, "Draw!");
         }
 
         private void mark_field(Index field, bool turn)
@@ -36,7 +48,7 @@
 
         public Game make_move(byte field)
         {
-            field--;
+            if (field != 0) { field--; }
             if (this.is_legal(field))
             {
                 this._turn = !this._turn;
@@ -45,7 +57,7 @@
             return this;
         }
 
-        public bool is_legal(byte field)
+        private bool is_legal(byte field)
         {
             return this._board[field] == null;
         }
@@ -53,13 +65,17 @@
         private byte check_game_state()
         {
             if (!this._board.Contains(null)) return 3;
-            // TODO: check wining conditions and player
+            foreach (Index[] condition in _win_conds)
+            {
+                if (condition.Count(index => _board[index] == false) == 3) return 2;
+                if (condition.Count(index => _board[index] == true) == 3) return 1;
+            }
             return 0;
         }
 
-        public string get_game_state_verbalized()
+        public string get_verbalized_game_state()
         {
-            return _game_states[check_game_state()];
+            return this._game_states[check_game_state()];
         }
 
         public bool is_finished()
@@ -67,7 +83,7 @@
             return this.check_game_state() > 0;
         }
 
-        private List<char> getReadable_board()
+        private List<char> get_readable_board()
         {
             List<char> result = new();
             foreach (bool? field in this._board)
@@ -79,7 +95,7 @@
 
         public void display_board(List<char>? provided = null)
         {
-            var board = provided != null ? provided : this.getReadable_board();
+            var board = provided != null ? provided : this.get_readable_board();
             Console.WriteLine('-' + new string('-', (int)(board.Count / 1.5 * 2)));
             for (int i = 0; i < board.Count; i += 3)
             {
@@ -94,7 +110,6 @@
                 Console.WriteLine("| " + str + " |");
                 Console.WriteLine('-' + new string('-', (int)(board.Count / 1.5 * 2)));
             }
-            Console.WriteLine();
         }
     }
     class Program
@@ -104,7 +119,7 @@
         {
             while (true)
             {
-                Console.WriteLine("Grać z numerami pól?");
+                Console.WriteLine("Play with numbered fields? (y/n)");
                 string? tips_prompt = Console.ReadLine();
                 if (tips_prompt.Contains("exit")) break;
                 switch (tips_prompt)
@@ -117,31 +132,21 @@
                         break;
                 }
                 Game game = new(tips);
+                Console.Clear();
                 game.display_board();
 
-                /*while (game.is_finished())*/
                 while (!game.is_finished())
                 {
-                    string prompt = Console.ReadLine();
+                    string? prompt = Console.ReadLine();
                     if (prompt.Contains("cancel")) break;
                     if (prompt.Length == 1 && char.IsDigit(prompt[0]))
                     {
-                        game.make_move(byte.Parse(prompt));
                         Console.Clear();
-                        game.display_board();
+                        game.make_move(byte.Parse(prompt)).display_board();
                     }
                 }
-                Console.WriteLine(game.get_game_state_verbalized());
+                if (game.is_finished()) Console.WriteLine(game.get_verbalized_game_state());
             }
         }
     }
 }
-
-/*
- * game.display_board(new() 
-            {
-                'O', 'X', 'E',         
-                'O', 'O', 'X',
-                'X', 'X', 'O',
-            });
-*/
