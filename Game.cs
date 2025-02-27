@@ -4,15 +4,16 @@
     {
         /**
          * TODO:
-         * Make documentation
-         * Add comments for documentation inside code
-         * Sort out methods
-         * ! Add input handlers? I doubt I need it.
-         * ! Add tests for everything; ex. execution time for each method
-         * ! Check if anything can be optimized; reduce memory and increase speed
+         * Make documentation [0]
+         * Add comments as a documentation inside code [0.0.1]
+         * Sort out methods [0.0.1]
+         * ! Add input handlers? I doubt I need it. I guess maybe a feedback [0.1.0]
+         * ! Add tests for everything; ex. execution time for each method [0.1.0]
+         * ! Check if anything can be optimized; reduce memory and increase speed [0.0.1]
+         * ! Improve game execution script [0.1.0]
          * 
          * & After 1.0.0 release:
-         * Add games history
+         * Add games history [0.1.0]
          */
         private List<bool?> _board = [];
         private bool _tips;
