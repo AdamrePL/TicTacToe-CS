@@ -84,19 +84,14 @@
             return this.check_game_state() > 0;
         }
 
-        private List<char> get_readable_board()
+        public void display_board(List<bool?>? provided = null)
         {
-            List<char> result = new();
-            foreach (bool? field in this._board)
+            var board = provided != null ? provided : this._board;
+            List<char> normalized_board = new();
+            foreach (bool? field in board)
             {
-                result.Add(field == null ? ' ' : (bool)field ? this.player_1 : this.player_2);
+                normalized_board.Add(field == null ? ' ' : (bool)field ? this.player_1 : this.player_2);
             }
-            return result;
-        }
-
-        public void display_board(List<char>? provided = null)
-        {
-            var board = provided != null ? provided : this.get_readable_board();
             Console.WriteLine('-' + new string('-', (int)(board.Count / 1.5 * 2)));
             for (int i = 0; i < board.Count; i += 3)
             {
@@ -104,7 +99,7 @@
 
                 for (int j = 0; j < 3; j++)
                 {
-                    str += this._tips ? board[i + j] == ' ' ? (i + j + 1).ToString() : board[i + j] : board[i + j];
+                    str += this._tips ? normalized_board[i + j] == ' ' ? (i + j + 1).ToString() : board[i + j] : board[i + j];
                     str += j < 2 ? " | " : "";
                 }
 
