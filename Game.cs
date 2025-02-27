@@ -65,11 +65,11 @@
 
         private byte check_game_state()
         {
-            if (!this._board.Contains(null)) return 3;
+            if (!this._board.Contains(null)) { return 3; }
             foreach (Index[] condition in _win_conds)
             {
-                if (condition.Count(index => _board[index] == false) == 3) return 2;
-                if (condition.Count(index => _board[index] == true) == 3) return 1;
+                if (condition.Count(index => _board[index] == false) == 3) { return 2; }
+                if (condition.Count(index => _board[index] == true) == 3) { return 1; }
             }
             return 0;
         }
@@ -92,19 +92,19 @@
             {
                 normalized_board.Add(field == null ? ' ' : (bool)field ? this.player_1 : this.player_2);
             }
-            Console.WriteLine('-' + new string('-', (int)(board.Count / 1.5 * 2)));
-            for (int i = 0; i < board.Count; i += 3)
+            Console.WriteLine('-' + new string('-', (int)(normalized_board.Count / 1.5 * 2)));
+            for (int i = 0; i < normalized_board.Count; i += 3)
             {
                 string str = "";
 
                 for (int j = 0; j < 3; j++)
                 {
-                    str += this._tips ? normalized_board[i + j] == ' ' ? (i + j + 1).ToString() : board[i + j] : board[i + j];
+                    str += this._tips ? normalized_board[i + j] == ' ' ? (i + j + 1).ToString() : normalized_board[i + j] : normalized_board[i + j];
                     str += j < 2 ? " | " : "";
                 }
 
                 Console.WriteLine("| " + str + " |");
-                Console.WriteLine('-' + new string('-', (int)(board.Count / 1.5 * 2)));
+                Console.WriteLine('-' + new string('-', (int)(normalized_board.Count / 1.5 * 2)));
             }
         }
     }
@@ -113,35 +113,31 @@
         public static bool tips;
         static void Main(string[] args)
         {
+            string[] cancelations = ["exit", "leave", "l", "stop", "cancel", "c"];
+            string[] confirms = ["y", "ye", "yes"];
+
             while (true)
             {
-                Console.WriteLine("Play with numbered fields? (y/n)");
-                string? tips_prompt = Console.ReadLine();
-                if (tips_prompt.Contains("exit")) break;
-                switch (tips_prompt)
-                {
-                    case "y":
-                        tips = true;
-                        break;
-                    case "n":
-                        tips = false;
-                        break;
-                }
+                Console.WriteLine("Play with numbered fields? (y/yes/n)");
+                string tips_prompt = Console.ReadLine()!.ToLower();
+                if (cancelations.Contains(tips_prompt)) { break; }
+                if (confirms.Contains(tips_prompt.ToLower())) { tips = true; }
+
                 Game game = new(tips);
                 Console.Clear();
                 game.display_board();
 
                 while (!game.is_finished())
                 {
-                    string? prompt = Console.ReadLine();
-                    if (prompt.Contains("cancel")) break;
+                    string? prompt = Console.ReadLine()!.ToLower();
+                    if (cancelations.Contains(prompt)) { break; }
                     if (prompt.Length == 1 && char.IsDigit(prompt[0]))
                     {
                         Console.Clear();
                         game.make_move(byte.Parse(prompt)).display_board();
                     }
                 }
-                if (game.is_finished()) Console.WriteLine(game.get_verbalized_game_state());
+                if (game.is_finished()) { Console.WriteLine(game.get_verbalized_game_state()); }
             }
         }
     }
